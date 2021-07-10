@@ -38,9 +38,19 @@ describe('Last octet as host', () => {
     });
 
     describe('The first usable address', () => {
-        test('with a routing prefix of 32 is the identity function of the IP', () => {
+        test('with a routing prefix of 32 is always the identity function of the given IP', () => {
             expect(ipv4CIDR.firstUsableAddress([192, 168, 1, 0], 32)).toEqual([192, 168, 1, 0]);
             expect(ipv4CIDR.firstUsableAddress([192, 168, 1, 6], 32)).toEqual([192, 168, 1, 6]);
-        })
+        });
+
+        test('with a routing prefix of 32 and a starting address of 256 is rejected as out of bounds', () => {
+            const attemptOutOfBoundCall = () => ipv4CIDR.firstUsableAddress([192, 168, 1, 256], 32);
+            expect(attemptOutOfBoundCall).toThrow(OutOfBoundError);
+        });
+
+        test('with a routing prefix of 32 and a starting address of -256 is rejected as out of bounds', () => {
+            const attemptOutOfBoundCall = () => ipv4CIDR.firstUsableAddress([192, 168, 1, -256], 32);
+            expect(attemptOutOfBoundCall).toThrow(OutOfBoundError);
+        });
     });
 });
