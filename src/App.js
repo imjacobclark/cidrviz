@@ -5,7 +5,14 @@ function App() {
 
   return (
     <div>
-      <h1>Understand CIDR and IPv4</h1>
+      <h1>CIDRViz</h1>
+
+      <p>A resource for understanding and calculating IPv4 and IPv6 addresses and CIDR blocks.</p>
+      <p>Calculate ranges, divide and join blocks, generate random IPs within a block and save your CIDR configs for later.</p>
+
+      <hr />
+
+      <h2>Understand CIDR and IPv4</h2>
       <p>The basic unit when working with IPs is the <i>bit</i>, a <i>bit</i> represents true or false (on or off), it is represented as either a 0 for false or 1 for true.</p>
       <p>We call the number system that uses just 0 and 1 binary. Or the base-2 number system. Each digit is referred to as a bit, like we mentioned above.</p>
       <p>You're probably used to seeing IPs in decimal (numbers that humans count with) form, otherwise known as base-10. An IP such as 129.168.2.1 is an example of such an address. You might recognise this address from changing the password on your WiFi router, more on this later. In reality, IPs are shown in decimal to help humans, but underneath IPs are actually just collections of bits. 32 of them to be precise.</p>
