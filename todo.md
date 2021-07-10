@@ -2,7 +2,7 @@
 
 ## Todo
 
-- [ ] Init CRA
+- [x] Init CRA
 - [ ] Create CIDR abstraction that accepts a number of bits and returns number of IPs available
 - [ ] Set up GitHub actions to run unit tests
 - [ ] Add Tailwind
