@@ -25,7 +25,7 @@ const firstUsableAddress = (ip, range) => {
     const octetRangeExceedsUpperBound = accountForZeroIndexing(lastOctet + numberOfPossibleAddresses) > OCTET_UPPER_BOUND;
 
     if(octetExceedsLowerBound || octetExceedsUpperBound || octetRangeExceedsUpperBound) 
-        throw new OutOfBoundError(`Octet ${lastOctet} ${numberOfPossibleAddresses} exceeds ${OCTET_LOWER_BOUND} and ${OCTET_UPPER_BOUND}. This is an invalid IP block.`);
+        throw new OutOfBoundError(`Octet exceeds ${OCTET_LOWER_BOUND} and ${OCTET_UPPER_BOUND}. This is an invalid IP block.`);
     
     return ip;
 }
