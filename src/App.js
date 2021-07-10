@@ -1,23 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import CIDR from './domain/CIDR';
 
 function App() {
+  const ipv4CIDR = CIDR.ipv4();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Understand CIDR and IPv4</h1>
+      <p>The basic unit when working with IPs is the <i>bit</i>, a <i>bit</i> represents true or false (on or off), it is represented as either a 0 for false or 1 for true.</p>
+      <p>We call the number system that uses just 0 and 1 binary. Or the base-2 number system. Each digit is referred to as a bit, like we mentioned above.</p>
+      <p>You're probably used to seeing IPs in decimal (numbers that humans count with) form, otherwise known as base-10. An IP such as 129.168.2.1 is an example of such an address. You might recognise this address from changing the password on your WiFi router, more on this later. In reality, IPs are shown in decimal to help humans, but underneath IPs are actually just collections of bits. 32 of them to be precise.</p>
+      <p>As set out in the IPv4 spec, we split IPv4 addresses up into octets (eight 0 and 1s, or eight bits), of which there are 4 groups. This means there are a finite number of addresses within the IPv4 address space, as no further groups can be added and the number of bits in each group are fixed.</p>
+      <p>To be precise, on any particular network, there are exactly 4,294,967,296 IPv4 addresses available. This is likely not a problem for a private network, but the explosion of devices with public internet connections has resulted in us exhausting almost all IPv4 addresses. The newer IPv6 spec fixes this problem, however IPv4 is still widely used.</p>
+      <p>If we take 192.168.2.1 as an example, the first octet would be 192, the second being 168, the third 2 and the fourth 1. When we see 4 groups of numbers representing an IP with a dot seperating each, we call this a dotted decimal notation.</p>
+      <p>Lets turn 192.168.2.1 into its true form. The binary representation of this address is actually 1100 0000 1010 1000 0000 0010 0000 0001.</p>
+
+      <hr /> 
+  
+      <p>Avaliable addresses in a <code>/24</code> CIDR range: <code>{ipv4CIDR.availableAddresses(24)}</code></p>
+      <p>First avaliable address for <code>192.168.1.0/24</code>: <code>{ipv4CIDR.firstUsableAddress([192, 168, 1, 0], 24).join(".")}</code></p>
     </div>
   );
 }
