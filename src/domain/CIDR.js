@@ -20,17 +20,33 @@ const availableAddresses = range => {
     return Math.pow(2, (CIDR_RANGE_UPPER_BOUND - range));
 }
 
+const octetIsWithinRange = (octet, numberOfAddresses) => {
+    const octetExceedsUpperBound = octet > OCTET_UPPER_BOUND;
+    const octetExceedsLowerBound = octet < OCTET_LOWER_BOUND;
+    const octetRangeExceedsUpperBound = accountForZeroIndexing(octet + numberOfAddresses) > OCTET_UPPER_BOUND;
+
+    return octetExceedsLowerBound || octetExceedsUpperBound || octetRangeExceedsUpperBound;
+}
+
 const firstUsableAddress = (ip, range) => {
     const lastOctet = ip[3];
     const numberOfPossibleAddresses = availableAddresses(range);
 
-    const octetExceedsUpperBound = lastOctet > OCTET_UPPER_BOUND;
-    const octetExceedsLowerBound = lastOctet < OCTET_LOWER_BOUND;
-    const octetRangeExceedsUpperBound = accountForZeroIndexing(lastOctet + numberOfPossibleAddresses) > OCTET_UPPER_BOUND;
-
-    if(octetExceedsLowerBound || octetExceedsUpperBound || octetRangeExceedsUpperBound) 
+    if(octetIsWithinRange(lastOctet, numberOfPossibleAddresses)) 
         throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
     
+    return ip;
+}
+
+const lastUsableAddress = (ip, range) => {
+    const lastOctet = ip[3];
+    const numberOfPossibleAddresses = availableAddresses(range);
+
+    if(octetIsWithinRange(lastOctet, numberOfPossibleAddresses)) 
+        throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+
+    ip[3] = accountForZeroIndexing(lastOctet + numberOfPossibleAddresses);
+
     return ip;
 }
 
@@ -38,7 +54,8 @@ export default class CIDR {
     static ipv4(){
         return {
             availableAddresses,
-            firstUsableAddress
+            firstUsableAddress,
+            lastUsableAddress
         }
     }
 }

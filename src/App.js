@@ -22,9 +22,20 @@ function App() {
       <p>Lets turn 192.168.2.1 into its true form. The binary representation of this address is actually 1100 0000 1010 1000 0000 0010 0000 0001.</p>
 
       <hr /> 
-  
-      <p>Avaliable addresses in a <code>/24</code> CIDR range: <code>{ipv4CIDR.availableAddresses(24)}</code></p>
-      <p>First avaliable address for <code>192.168.1.0/24</code>: <code>{ipv4CIDR.firstUsableAddress([192, 168, 1, 0], 24).join(".")}</code></p>
+
+      <h3><code>192.168.1.0/32</code></h3>
+      <p><strong>Number of addresses</strong>: <code>{ipv4CIDR.availableAddresses(32)}</code></p>
+      <p><strong>First avaliable address</strong>: <code>{ipv4CIDR.firstUsableAddress([192, 168, 1, 0], 32).join(".")}</code></p>
+      <p><strong>Last avaliable address</strong>: <code>{ipv4CIDR.lastUsableAddress([192, 168, 1, 0], 32).join(".")}</code></p>
+
+      <hr />
+
+      <h3><code>192.168.1.0/26</code></h3>
+      <p><strong>Number of addresses</strong>: <code>{ipv4CIDR.availableAddresses(26)}</code></p>
+      <p><strong>First avaliable address</strong>: <code>{ipv4CIDR.firstUsableAddress([192, 168, 1, 0], 26).join(".")}</code></p>
+      <p><strong>Last avaliable address</strong>: <code>{ipv4CIDR.lastUsableAddress([192, 168, 1, 0], 26).join(".")}</code></p>
+
+      <hr />
     </div>
   );
 }

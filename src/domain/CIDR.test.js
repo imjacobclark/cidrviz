@@ -62,4 +62,25 @@ describe('Last octet as host', () => {
             expect(attemptOutOfBoundCall).toThrow(OutOfBoundError);
         });
     });
+
+    describe('The last usable address', () => {
+        test('with a routing prefix of 32 is always the identity function of the given IP', () => {
+            expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 0], 32)).toEqual([192, 168, 1, 0]);
+            expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 6], 32)).toEqual([192, 168, 1, 6]);
+        });
+
+        test('with a routing prefix of 32 and a starting host postfix of 256 is rejected as out of bounds', () => {
+            const attemptOutOfBoundCall = () => ipv4CIDR.lastUsableAddress([192, 168, 1, 256], 32);
+            expect(attemptOutOfBoundCall).toThrow(OutOfBoundError);
+        });
+
+        test('with a routing prefix of 32 and a starting host postfix of -256 is rejected as out of bounds', () => {
+            const attemptOutOfBoundCall = () => ipv4CIDR.lastUsableAddress([192, 168, 1, -256], 32);
+            expect(attemptOutOfBoundCall).toThrow(OutOfBoundError);
+        });
+
+        test('with a routing prefix of 26 and a starting host postfix of 0 returns 63', () => {
+            expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 0], 26)).toEqual([192, 168, 1, 63]);
+        });
+    });
 });
