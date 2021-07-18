@@ -3,6 +3,8 @@ import OutOfBoundError from '../errors/OutOfBoundsError';
 
 const ipv4CIDR = CIDR.ipv4();
 
+const accountForZeroIndexing = addresses => addresses - 1;
+
 describe('CIDR bounds', () => {
     test('32 is the upper bound', () => {
         const attemptOutOfBoundCall = () => ipv4CIDR.availableAddresses(33);
@@ -32,7 +34,7 @@ describe('Last octet as host', () => {
             [26,64],
             [25,128],
             [24,256]
-        ])('%i addresses when routing prefix is %s bits', (range, ips) => {
+        ])('%s addresses when routing prefix is %i bits', (range, ips) => {
             expect(ipv4CIDR.availableAddresses(range)).toEqual(ips);
         });
     });
@@ -81,6 +83,33 @@ describe('Last octet as host', () => {
 
         test('with a routing prefix of 26 and a starting host postfix of 0 returns 63', () => {
             expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 0], 26)).toEqual([192, 168, 1, 63]);
+        });
+
+        it.each([31,30,29,28,27,26,25,24])('with a routing prefix of %i is the identity function of the given IP when within range', range => {
+            expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 0], range)).toEqual([192, 168, 1, accountForZeroIndexing(Math.pow(2, (32 - range)))]);
+        });
+    });
+});
+
+describe('Third and Fourt octets as host', () => {
+    describe('Number of hosts conforms with 2^(32-cidr_range)', () => {
+        it.each([
+            [23,512],
+            [22,1024],
+            [21,2048],
+            [20,4096],
+            [19,8192],
+            [18,16384],
+            [17,32768],
+            [16,65536]
+        ])('%s addresses when routing prefix is %i bits', (range, ips) => {
+            expect(ipv4CIDR.availableAddresses(range)).toEqual(ips);
+        });
+    });
+
+    describe('The first usable address', () => {
+        it.each([23,22,21,20,19,18,17,16])('with a routing prefix of %i the fourth octet always starts at 0', range => {
+            expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 0], range)).toEqual([192, 168, 1, 0]);
         });
     });
 });
