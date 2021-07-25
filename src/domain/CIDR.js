@@ -1,5 +1,5 @@
 import OutOfBoundError from '../errors/OutOfBoundsError';
-
+import Bitmask from './Bitmask';
 
 const CIDR_RANGE_UPPER_BOUND = 32;
 const CIDR_RANGE_LOWER_BOUND = 0;
@@ -12,12 +12,14 @@ const OUT_OF_BOUND_ERROR_MESSAGE_OCTET = `Octet exceeds ${OCTET_LOWER_BOUND} and
 
 const accountForZeroIndexing = addresses => addresses - 1;
 
+const availableAddressesFromNumberBits = bits => Math.pow(2, bits);
+
 const availableAddresses = range => {
     if(range > CIDR_RANGE_UPPER_BOUND || range < CIDR_RANGE_LOWER_BOUND){
         throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_CIDR);
     }
 
-    return Math.pow(2, (CIDR_RANGE_UPPER_BOUND - range));
+    return availableAddressesFromNumberBits(CIDR_RANGE_UPPER_BOUND - range);
 }
 
 const octetIsWithinRange = (octet, numberOfAddresses) => {
@@ -29,25 +31,60 @@ const octetIsWithinRange = (octet, numberOfAddresses) => {
 }
 
 const firstUsableAddress = (ip, range) => {
-    const lastOctet = ip[3];
-    const numberOfPossibleAddresses = availableAddresses(range);
-
-    if(octetIsWithinRange(lastOctet, numberOfPossibleAddresses)) 
-        throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+    if(range === 32){
+        const lastOctet = ip[3];
+        const numberOfPossibleAddresses = availableAddresses(32);
     
-    return ip;
+        if(octetIsWithinRange(lastOctet, numberOfPossibleAddresses)) 
+            throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+    
+        return ip;
+    }
+
+    const octets = Bitmask.splitIntoOctets(Bitmask.fromRange(range));
+    return octets.map(octet => octet.find(bit => bit === 0)).map((octet, i) => {
+        if(octet === undefined) {
+            return ip[i];
+        }else{
+            const numberOfPossibleAddresses = availableAddressesFromNumberBits(octets[i].filter(octet => octet === 0).length);
+
+            if(octetIsWithinRange(ip[i], numberOfPossibleAddresses)) 
+                throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+
+            return ip[i];
+        }
+    });
 }
 
+
 const lastUsableAddress = (ip, range) => {
-    const lastOctet = ip[3];
-    const numberOfPossibleAddresses = availableAddresses(range);
+    if(range === 32){
+        const lastOctet = ip[3];
+        const numberOfPossibleAddresses = availableAddresses(32);
+    
+        if(octetIsWithinRange(lastOctet, numberOfPossibleAddresses)) 
+            throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+    
+        ip[3] = accountForZeroIndexing(lastOctet + numberOfPossibleAddresses);
 
-    if(octetIsWithinRange(lastOctet, numberOfPossibleAddresses)) 
-        throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+        return ip;
+    }
 
-    ip[3] = accountForZeroIndexing(lastOctet + numberOfPossibleAddresses);
+    const octets = Bitmask.splitIntoOctets(Bitmask.fromRange(range));
+    return octets.map(octet => octet.find(bit => bit === 0)).map((octet, i) => {
+        if(octet === undefined) {
+            return ip[i];
+        }else{
+            const numberOfPossibleAddresses = availableAddressesFromNumberBits(octets[i].filter(octet => octet === 0).length);
 
-    return ip;
+            if(octetIsWithinRange(ip[i], numberOfPossibleAddresses)) 
+                throw new OutOfBoundError(OUT_OF_BOUND_ERROR_MESSAGE_OCTET);
+
+            ip[i] = accountForZeroIndexing(ip[i] + numberOfPossibleAddresses);
+
+            return ip[i];
+        }
+    });
 }
 
 export default class CIDR {

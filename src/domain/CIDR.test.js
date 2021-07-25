@@ -91,7 +91,7 @@ describe('Last octet as host', () => {
     });
 });
 
-describe('Third and Fourt octets as host', () => {
+describe('Third and Fourth octets as host', () => {
     describe('Number of hosts conforms with 2^(32-cidr_range)', () => {
         it.each([
             [23,512],
@@ -109,7 +109,7 @@ describe('Third and Fourt octets as host', () => {
 
     describe('The first usable address', () => {
         it.each([23,22,21,20,19,18,17,16])('with a routing prefix of %i the fourth octet always starts at 0', range => {
-            expect(ipv4CIDR.lastUsableAddress([192, 168, 1, 0], range)).toEqual([192, 168, 1, 0]);
+            expect(ipv4CIDR.firstUsableAddress([192, 168, 0, 0], range)).toEqual([192, 168, 0, 0]);
         });
     });
 });
