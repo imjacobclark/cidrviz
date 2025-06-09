@@ -4,7 +4,7 @@ A small React application that demonstrates how to work with CIDR (Classless Int
 
 ## Development
 
-Install dependencies and run the usual CRA scripts:
+Install dependencies (requires Node.js 22+) and run the usual CRA scripts:
 
 ```bash
 npm install          # install dependencies
